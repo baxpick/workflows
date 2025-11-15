@@ -57,7 +57,12 @@ jobs:
           if [ -n "${SENSITIVE_JSON}" ] && [ "${SENSITIVE_JSON}" != "{}" ]; then
             echo "Processing sensitive environment variables..."
             
-            # Set environment variables (values are automatically masked)
+            # First mask all sensitive values to prevent them from appearing in logs
+            echo "${SENSITIVE_JSON}" | jq -r 'to_entries[] | .value' | while read -r value; do
+              echo "::add-mask::${value}"
+            done
+            
+            # Now set environment variables (values are automatically masked)
             echo "${SENSITIVE_JSON}" | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> $GITHUB_ENV
           fi
 
