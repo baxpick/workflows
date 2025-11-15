@@ -1,0 +1,69 @@
+name: Reusable to run script
+
+on:
+  workflow_call:
+    inputs:
+      scriptPath:
+        description: 'Path to script which will execute'
+        required: true
+        type: string
+        default: ""
+      scriptArgs:
+        description: 'Arguments to pass to script which will execute'
+        required: false
+        type: string
+        default: ""
+      # Environment variables as JSON string to set before script execution
+      scriptEnvVars:
+        description: 'Environment variables as JSON string to set before script execution'
+        required: false
+        type: string
+        default: "{}"
+
+    secrets:
+      # Environment variables as JSON string to set before script execution (sensitive values)
+      SCRIPT_ENV_VARS_SENSITIVE:
+        required: false
+
+jobs:
+  execute_run_script:
+    runs-on: ubuntu-latest        
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      # Set environment variables for the script which will execute later
+      #
+      # Set json string in this format: { "VAR1": "value1", "VAR2": "value2" } as value for:
+      # 1) github variable 'SCRIPT_ENV_VARS_<ENVIRONMENT>'            (for non sensitive variables)
+      # 2) github secret   'SCRIPT_ENV_VARS_SENSITIVE_<ENVIRONMENT>'  (for sensitive variables)
+      - name: Set script environment variables
+        run: |
+          # Set regular vars
+          echo "Processing regular environment variables..."
+          if [ "${{ inputs.scriptEnvVars }}" != "{}" ] && [ -n "${{ inputs.scriptEnvVars }}" ]; then
+            echo '${{ inputs.scriptEnvVars }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> $GITHUB_ENV
+          fi
+
+          # Set sensitive vars from secret
+          SENSITIVE_JSON='${{ secrets.SCRIPT_ENV_VARS_SENSITIVE }}'
+          if [ -n "${SENSITIVE_JSON}" ] && [ "${SENSITIVE_JSON}" != "{}" ]; then
+            echo "Processing sensitive environment variables..."
+            
+            # Set environment variables (values are automatically masked)
+            echo "${SENSITIVE_JSON}" | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> $GITHUB_ENV
+          fi
+
+      - name: Execute script
+        env:
+          FOLDER_ROOT: ${{ github.workspace }}
+          
+        run: |
+          ${{ inputs.scriptPath }} ${{ inputs.scriptArgs }}
