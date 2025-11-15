@@ -32,26 +32,28 @@ Example:
 
     and these will be visible to the script like regular environment variables but since they are in a secret, they can not be printed.
 
-```yml
-name: Run script to build PRODUCTION infrastructure
+- Example workflow which uses reusable workflow:
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch: # Allows manual triggering
+  ```yml
+  name: Run script to build PRODUCTION infrastructure
 
-jobs:
-  create_resources:
-    uses: ./path/to/reusable_run_script.yml
-    
-    with:
-      scriptPath: "./infrastructure.sh"
-      scriptArgs: "--action build"
-      scriptEnvVars: ${{ vars.SCRIPT_ENV_VARS_PROD }}
+  on:
+    push:
+      branches:
+        - main
+    workflow_dispatch: # Allows manual triggering
 
-    secrets:
-      SCRIPT_ENV_VARS_SENSITIVE: ${{ secrets.SCRIPT_ENV_VARS_SENSITIVE_PROD }}
-```
+  jobs:
+    create_resources:
+      uses: ./path/to/reusable_run_script.yml
+      
+      with:
+        scriptPath: "./infrastructure.sh"
+        scriptArgs: "--action build"
+        scriptEnvVars: ${{ vars.SCRIPT_ENV_VARS_PROD }}
+
+      secrets:
+        SCRIPT_ENV_VARS_SENSITIVE: ${{ secrets.SCRIPT_ENV_VARS_SENSITIVE_PROD }}
+  ```
 
 
