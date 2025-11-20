@@ -3,14 +3,9 @@ name: Reusable to run script
 on:
   workflow_call:
     inputs:
-      scriptPath:
-        description: 'Path to script which will execute'
+      script:
+        description: 'Script to execute (with optional arguments)'
         required: true
-        type: string
-        default: ""
-      scriptArgs:
-        description: 'Arguments to pass to script which will execute'
-        required: false
         type: string
         default: ""
       # Environment variables as JSON string to set before script execution
@@ -71,4 +66,4 @@ jobs:
           FOLDER_ROOT: ${{ github.workspace }}
           
         run: |
-          ${{ inputs.scriptPath }} ${{ inputs.scriptArgs }}
+          ${{ inputs.script }}

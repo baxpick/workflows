@@ -48,8 +48,7 @@ Example:
       uses: ./path/to/reusable_run_script.yml
       
       with:
-        scriptPath: "./infrastructure.sh"
-        scriptArgs: "--action build"
+        script: "./infrastructure.sh --action build"
         scriptEnvVars: ${{ vars.SCRIPT_ENV_VARS_PROD }}
 
       secrets:
