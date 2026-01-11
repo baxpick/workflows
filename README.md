@@ -6,7 +6,7 @@ Example use case:
 - run bash script from Ubuntu with custom environment variables set with single github variable or github secret containing json string with variable names and values
 - good when you have multiple environments (prod, dev, ...)
 - good if you like having a single github variable containing all variables in json string
-- good when you want to use github actions as a service to run scripts so you can easily migrate to any other "script running service" like GitLab or AzureDevOps
+- good when you want to use GaaS (github actions as a service) to run scripts so you can easily migrate to any other "script running service" like GitLab or AzureDevOps
 
 Example:
 
@@ -45,14 +45,12 @@ Example:
 
   jobs:
     create_resources:
-      uses: ./path/to/reusable_run_script.yml
+      uses: baxpick/workflows/.github/workflows/reusable_run_script.yml@main
       
       with:
-        script: "./infrastructure.sh --action build"
+        script: "./awesome_script.sh -e prod"
         scriptEnvVars: ${{ vars.SCRIPT_ENV_VARS_PROD }}
 
       secrets:
         SCRIPT_ENV_VARS_SENSITIVE: ${{ secrets.SCRIPT_ENV_VARS_SENSITIVE_PROD }}
   ```
-
-
