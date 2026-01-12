@@ -13,10 +13,8 @@ Example:
 - set github action variable `SCRIPT_ENV_VARS_PROD`:
 
     ```
-    {
-        "USER": "johndoe",
-        "ENVIRONMENT": "prod"
-    }
+    { "USER": "johndoe",
+      "ENVIRONMENT": "prod" }
     ```
 
     and these will be visible to the script like regular environment variables.
@@ -24,10 +22,8 @@ Example:
 - set github action secret `SCRIPT_ENV_VARS_SENSITIVE`:
 
     ```
-    {
-        "PASSWORD": "12345",
-        "SOME_TOKEN": "secret"
-    }
+    { "PASSWORD": "12345",
+      "SOME_TOKEN": "secret" }
     ```
 
     and these will be visible to the script like regular environment variables but since they are in a secret, they can not be printed.
